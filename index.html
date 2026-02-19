@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ramadan Pray Time | Worldwide</title>
+<meta name="description" content="Ramadan Pray Time with Fajr and Iftar highlight. Powered by Itech Journey and D-Bross.">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    background:url('https://images.unsplash.com/photo-1589987607627-8d3e3e5f2c4a') center/cover fixed;
+    color:white;
+    transition:0.4s;
+}
+
+.overlay{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.75);
+    top:0;
+    left:0;
+    z-index:-1;
+}
+
+.light{
+    background:white;
+    color:black;
+}
+
+.top-banner{
+    text-align:center;
+    padding:25px 10px 10px;
+}
+
+.top-banner h1{
+    font-size:36px;
+    margin:0;
+    background:linear-gradient(45deg,gold,#ff9800);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.powered{
+    font-size:14px;
+    opacity:0.85;
+    margin-top:5px;
+}
+
+.container{
+    max-width:950px;
+    margin:20px auto;
+    background:rgba(255,255,255,0.08);
+    padding:25px;
+    border-radius:20px;
+    backdrop-filter:blur(12px);
+}
+
+button,input{
+    padding:8px;
+    margin:5px;
+    border-radius:6px;
+    border:none;
+}
+
+button{
+    background:gold;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.highlight{
+    background:#ff5722;
+    padding:5px 10px;
+    border-radius:6px;
+    font-weight:bold;
+    color:white;
+}
+
+table{
+    width:100%;
+    margin-top:20px;
+    border-collapse:collapse;
+    background:white;
+    color:black;
+}
+
+th,td{
+    padding:6px;
+    border:1px solid #ddd;
+    text-align:center;
+}
+
+th{
+    background:#2c3e50;
+    color:white;
+}
+
+.controls{
+    text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="overlay"></div>
+
+<div class="top-banner">
+    <h1>🌙 Ramadan Kareem</h1>
+    <p><strong>Ramadan Pray Time</strong></p>
+    <p class="powered">
+        Powered by <strong>Itech Journey</strong> & <strong>D-Bross</strong>
+    </p>
+</div>
+
+<div class="container" id="content">
+
+<div class="controls">
+<button onclick="getLocation()">📍 Auto Detect</button>
+<input type="text" id="city" placeholder="Enter City">
+<button onclick="manualSearch()">Search</button>
+<button onclick="toggleMode()">🌗 Mode</button>
+<button onclick="downloadPDF()">📄 PDF</button>
+</div>
+
+<div id="result"></div>
+<div id="calendar"></div>
+
+</div>
+
+<script>
+
+function formatAMPM(time){
+    let t=time.split(" ")[0];
+    let [h,m]=t.split(":");
+    h=parseInt(h);
+    let ampm=h>=12?"PM":"AM";
+    h=h%12||12;
+    return h+":"+m+" "+ampm;
+}
+
+function startCountdown(targetTime, elementId){
+    function update(){
+        let now=new Date();
+        let target=new Date();
+        let [h,m]=targetTime.split(" ")[0].split(":");
+        target.setHours(h);
+        target.setMinutes(m);
+        target.setSeconds(0);
+
+        if(target<now){
+            target.setDate(target.getDate()+1);
+        }
+
+        let diff=target-now;
+        let hrs=Math.floor(diff/(1000*60*60));
+        let mins=Math.floor((diff%(1000*60*60))/(1000*60));
+        let secs=Math.floor((diff%(1000*60))/1000);
+
+        document.getElementById(elementId).innerHTML=
+        `${hrs}h ${mins}m ${secs}s`;
+    }
+    update();
+    setInterval(update,1000);
+}
+
+function getLocation(){
+navigator.geolocation.getCurrentPosition(pos=>{
+fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`)
+.then(res=>res.json())
+.then(data=>{
+let city=data.address.city||data.address.town||data.address.village;
+let country=data.address.country;
+loadRamadan(city,country);
+});
+});
+}
+
+function manualSearch(){
+let city=document.getElementById("city").value;
+loadRamadan(city,"");
+}
+
+async function loadRamadan(city,country){
+
+let hijriYear=new Date().getFullYear()-579;
+
+const response=await fetch(
+`https://api.aladhan.com/v1/hijriCalendarByCity/${hijriYear}/9?city=${city}&country=${country}&method=4`
+);
+
+const data=await response.json();
+let today=data.data[0];
+
+let dayName=today.date.gregorian.weekday.en;
+let gregDate=today.date.gregorian.date;
+let hijriDate=today.date.hijri.date;
+
+let content=`
+<h3>${city}</h3>
+<p><strong>${dayName}</strong>, ${gregDate}
+<small>(${hijriDate})</small></p>
+
+<p class="highlight">
+🌅 Fajr (Suhoor Ends): ${formatAMPM(today.timings.Fajr)}
+</p>
+<p>⏳ Time Remaining for Fajr:
+<span id="suhoorCount"></span></p>
+
+<p>Dhuhr: ${formatAMPM(today.timings.Dhuhr)}</p>
+<p>Asr: ${formatAMPM(today.timings.Asr)}</p>
+
+<p class="highlight">
+🌙 Iftar (Maghrib): ${formatAMPM(today.timings.Maghrib)}
+</p>
+<p>⏳ Time Remaining for Iftar:
+<span id="iftarCount"></span></p>
+
+<p>Isha: ${formatAMPM(today.timings.Isha)}</p>
+`;
+
+document.getElementById("result").innerHTML=content;
+
+startCountdown(today.timings.Fajr,"suhoorCount");
+startCountdown(today.timings.Maghrib,"iftarCount");
+
+/* FULL 30 DAY TABLE */
+let table=`
+<h3>Complete Ramadan Day List</h3>
+<table>
+<tr>
+<th>Day</th>
+<th>Date</th>
+<th>Fajr</th>
+<th>Dhuhr</th>
+<th>Asr</th>
+<th>Iftar</th>
+<th>Isha</th>
+</tr>`;
+
+data.data.forEach((day,index)=>{
+table+=`
+<tr>
+<td>${index+1}</td>
+<td>
+${day.date.gregorian.weekday.en}<br>
+${day.date.gregorian.date}<br>
+<small>${day.date.hijri.date}</small>
+</td>
+<td class="highlight">${formatAMPM(day.timings.Fajr)}</td>
+<td>${formatAMPM(day.timings.Dhuhr)}</td>
+<td>${formatAMPM(day.timings.Asr)}</td>
+<td class="highlight">${formatAMPM(day.timings.Maghrib)}</td>
+<td>${formatAMPM(day.timings.Isha)}</td>
+</tr>`;
+});
+
+table+="</table>";
+
+document.getElementById("calendar").innerHTML=table;
+}
+
+function toggleMode(){
+document.body.classList.toggle("light");
+}
+
+function downloadPDF(){
+html2pdf().from(document.getElementById("content")).save("Ramadan-Pray-Time.pdf");
+}
+
+</script>
+
+</body>
+</html>
