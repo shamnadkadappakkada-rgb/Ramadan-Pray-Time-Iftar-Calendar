@@ -1,2 +1,2 @@
-# Ramadan-Pray-Time-Iftar-Calendar
+# RamadanPrayTime-Iftar-Calendar
 Ramadan Pray Time &amp; Iftar Calendar-2026
