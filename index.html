@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Worldwide Ramadan Calendar-2026 | Worldwide</title>
 <meta name="description" content="Ramadan Pray Time with Fajr and Iftar highlight. Powered by Itech Journey and D-Bross.">
 
@@ -15,7 +14,6 @@ body{
     font-family:'Segoe UI',sans-serif;
     background:url('https://images.unsplash.com/photo-1589987607627-8d3e3e5f2c4a') center/cover fixed;
     color:white;
-    transition:0.4s;
 }
 
 .overlay{
@@ -36,20 +34,6 @@ body{
 .top-banner{
     text-align:center;
     padding:25px 10px 10px;
-}
-
-.top-banner h1{
-    font-size:36px;
-    margin:0;
-    background:linear-gradient(45deg,gold,#ff9800);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-}
-
-.powered{
-    font-size:14px;
-    opacity:0.85;
-    margin-top:5px;
 }
 
 .container{
@@ -108,15 +92,12 @@ th{
 </head>
 
 <body>
-
 <div class="overlay"></div>
 
 <div class="top-banner">
-    <h1>🌙 Ramadan Mubarak</h1>
-    <p><strong>Worldwide Ramadan Calendar-2026</strong></p>
-    <p class="powered">
-        Powered by <strong>Itech Journey</strong> & <strong>D-Bross</strong>
-    </p>
+<h1>🌙 Ramadan Mubarak</h1>
+<p><strong>Worldwide Ramadan Calendar & Prayer Times 2026</strong></p>
+<p>Powered by <strong>Itech Journey</strong> & <strong>D-Bross</strong></p>
 </div>
 
 <div class="container" id="content">
@@ -127,6 +108,7 @@ th{
 <button onclick="manualSearch()">Search</button>
 <button onclick="toggleMode()">🌗 Mode</button>
 <button onclick="downloadPDF()">📄 PDF</button>
+<button onclick="toggleAdhaan()" id="adhaanBtn">🔊 Adhaan ON</button>
 </div>
 
 <div id="result"></div>
@@ -134,40 +116,83 @@ th{
 
 </div>
 
+<!-- 🔊 Adhaan Audio -->
+<audio id="adhaanAudio" preload="auto">
+<source src="https://cdn.islamic.network/audio/adhan/adhan.mp3" type="audio/mpeg">
+</audio>
+
 <script>
 
+let adhaanEnabled = true;
+let playedPrayers = {};
+let prayerInterval = null;
+
 function formatAMPM(time){
-    let t=time.split(" ")[0];
-    let [h,m]=t.split(":");
-    h=parseInt(h);
-    let ampm=h>=12?"PM":"AM";
-    h=h%12||12;
-    return h+":"+m+" "+ampm;
+let t=time.split(" ")[0];
+let [h,m]=t.split(":");
+h=parseInt(h);
+let ampm=h>=12?"PM":"AM";
+h=h%12||12;
+return h+":"+m+" "+ampm;
 }
 
 function startCountdown(targetTime, elementId){
-    function update(){
-        let now=new Date();
-        let target=new Date();
-        let [h,m]=targetTime.split(" ")[0].split(":");
-        target.setHours(h);
-        target.setMinutes(m);
-        target.setSeconds(0);
+function update(){
+let now=new Date();
+let target=new Date();
+let [h,m]=targetTime.split(" ")[0].split(":");
+target.setHours(h);
+target.setMinutes(m);
+target.setSeconds(0);
 
-        if(target<now){
-            target.setDate(target.getDate()+1);
-        }
+if(target<now){ target.setDate(target.getDate()+1); }
 
-        let diff=target-now;
-        let hrs=Math.floor(diff/(1000*60*60));
-        let mins=Math.floor((diff%(1000*60*60))/(1000*60));
-        let secs=Math.floor((diff%(1000*60))/1000);
+let diff=target-now;
+let hrs=Math.floor(diff/(1000*60*60));
+let mins=Math.floor((diff%(1000*60*60))/(1000*60));
+let secs=Math.floor((diff%(1000*60))/1000);
 
-        document.getElementById(elementId).innerHTML=
-        `${hrs}h ${mins}m ${secs}s`;
-    }
-    update();
-    setInterval(update,1000);
+document.getElementById(elementId).innerHTML=
+`${hrs}h ${mins}m ${secs}s`;
+}
+update();
+setInterval(update,1000);
+}
+
+function toggleAdhaan(){
+adhaanEnabled=!adhaanEnabled;
+document.getElementById("adhaanBtn").innerHTML=
+adhaanEnabled?"🔊 Adhaan ON":"🔇 Adhaan OFF";
+}
+
+function checkPrayerTimes(todayTimings){
+
+if(prayerInterval){ clearInterval(prayerInterval); }
+
+prayerInterval=setInterval(()=>{
+
+if(!adhaanEnabled) return;
+
+let now=new Date();
+let currentTime=now.getHours()+":"+String(now.getMinutes()).padStart(2,'0');
+
+let prayers={
+Fajr:todayTimings.Fajr,
+Dhuhr:todayTimings.Dhuhr,
+Asr:todayTimings.Asr,
+Maghrib:todayTimings.Maghrib,
+Isha:todayTimings.Isha
+};
+
+for(let prayer in prayers){
+let prayerTime=prayers[prayer].split(" ")[0];
+if(currentTime===prayerTime && !playedPrayers[prayer]){
+document.getElementById("adhaanAudio").play();
+playedPrayers[prayer]=true;
+}
+}
+
+},1000);
 }
 
 function getLocation(){
@@ -197,18 +222,15 @@ const response=await fetch(
 
 const data=await response.json();
 
-// ✅ Get today's real Gregorian date
-let todayDate = new Date();
-let currentDay = todayDate.getDate();
+// ✅ Fix: find today's actual date
+let todayDate=new Date();
+let currentDay=todayDate.getDate();
 
-// ✅ Find matching Ramadan day from API
-let today = data.data.find(d =>
-    parseInt(d.date.gregorian.day) === currentDay
+let today=data.data.find(d=>
+parseInt(d.date.gregorian.day)===currentDay
 );
 
-if(!today){
-    today = data.data[0]; // fallback safety
-}
+if(!today){ today=data.data[0]; }
 
 let dayName=today.date.gregorian.weekday.en;
 let gregDate=today.date.gregorian.date;
@@ -220,18 +242,18 @@ let content=`
 <small>(${hijriDate})</small></p>
 
 <p class="highlight">
-🌅 Fajr (Suhoor Ends): ${formatAMPM(today.timings.Fajr)}
+🌅 Fajr: ${formatAMPM(today.timings.Fajr)}
 </p>
-<p>⏳ Time Remaining for Fajr:
+<p>⏳ Time Remaining:
 <span id="suhoorCount"></span></p>
 
 <p>Dhuhr: ${formatAMPM(today.timings.Dhuhr)}</p>
 <p>Asr: ${formatAMPM(today.timings.Asr)}</p>
 
 <p class="highlight">
-🌙 Iftar (Maghrib): ${formatAMPM(today.timings.Maghrib)}
+🌙 Maghrib: ${formatAMPM(today.timings.Maghrib)}
 </p>
-<p>⏳ Time Remaining for Iftar:
+<p>⏳ Time Remaining:
 <span id="iftarCount"></span></p>
 
 <p>Isha: ${formatAMPM(today.timings.Isha)}</p>
@@ -241,10 +263,11 @@ document.getElementById("result").innerHTML=content;
 
 startCountdown(today.timings.Fajr,"suhoorCount");
 startCountdown(today.timings.Maghrib,"iftarCount");
-playedPrayers = {};
-    
+
+playedPrayers={};
 checkPrayerTimes(today.timings);
-/* FULL 30 DAY TABLE */
+
+// FULL TABLE
 let table=`
 <h3>Complete Ramadan Day List</h3>
 <table>
@@ -254,7 +277,7 @@ let table=`
 <th>Fajr</th>
 <th>Dhuhr</th>
 <th>Asr</th>
-<th>Iftar</th>
+<th>Maghrib</th>
 <th>Isha</th>
 </tr>`;
 
@@ -276,7 +299,6 @@ ${day.date.gregorian.date}<br>
 });
 
 table+="</table>";
-
 document.getElementById("calendar").innerHTML=table;
 }
 
@@ -289,20 +311,5 @@ html2pdf().from(document.getElementById("content")).save("Ramadan-Pray-Time.pdf"
 }
 
 </script>
-
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
