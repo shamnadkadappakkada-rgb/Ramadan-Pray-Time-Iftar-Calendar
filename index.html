@@ -135,49 +135,6 @@ th{
 
 </div>
 
-let adhaanEnabled = true;
-let playedPrayers = {};
-
-function toggleAdhaan(){
-    adhaanEnabled = !adhaanEnabled;
-    let btn = document.getElementById("adhaanBtn");
-
-    if(adhaanEnabled){
-        btn.innerHTML = "🔊 Adhaan ON";
-    } else {
-        btn.innerHTML = "🔇 Adhaan OFF";
-    }
-}
-
-function checkPrayerTimes(todayTimings){
-
-    setInterval(() => {
-
-        if(!adhaanEnabled) return;
-
-        let now = new Date();
-        let currentTime = now.getHours() + ":" + 
-                          String(now.getMinutes()).padStart(2,'0');
-
-        let prayers = {
-            Fajr: todayTimings.Fajr,
-            Dhuhr: todayTimings.Dhuhr,
-            Asr: todayTimings.Asr,
-            Maghrib: todayTimings.Maghrib,
-            Isha: todayTimings.Isha
-        };
-
-        for(let prayer in prayers){
-
-            let prayerTime = prayers[prayer].split(" ")[0];
-
-            if(currentTime === prayerTime && !playedPrayers[prayer]){
-                document.getElementById("adhaanAudio").play();
-                playedPrayers[prayer] = true;
-            }
-        }
-
-    }, 1000);
 }
 <script>
 
@@ -337,6 +294,7 @@ html2pdf().from(document.getElementById("content")).save("Ramadan-Pray-Time.pdf"
 
 </body>
 </html>
+
 
 
 
