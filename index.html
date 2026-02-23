@@ -135,7 +135,6 @@ th{
 
 </div>
 
-}
 <script>
 
 function formatAMPM(time){
@@ -243,8 +242,8 @@ document.getElementById("result").innerHTML=content;
 
 startCountdown(today.timings.Fajr,"suhoorCount");
 startCountdown(today.timings.Maghrib,"iftarCount");
-// ✅ Start Adhaan system
 playedPrayers = {};
+    
 checkPrayerTimes(today.timings);
 /* FULL 30 DAY TABLE */
 let table=`
@@ -294,6 +293,7 @@ html2pdf().from(document.getElementById("content")).save("Ramadan-Pray-Time.pdf"
 
 </body>
 </html>
+
 
 
 
