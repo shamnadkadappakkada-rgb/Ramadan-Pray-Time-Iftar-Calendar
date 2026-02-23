@@ -127,6 +127,7 @@ th{
 <button onclick="manualSearch()">Search</button>
 <button onclick="toggleMode()">🌗 Mode</button>
 <button onclick="downloadPDF()">📄 PDF</button>
+<button onclick="toggleAdhaan()" id="adhaanBtn">🔊 Adhaan ON</button>
 </div>
 
 <div id="result"></div>
@@ -134,6 +135,58 @@ th{
 
 </div>
 
+<!-- ✅ Adhaan Audio -->
+<audio id="adhaanAudio" preload="auto">
+    <source src="https://cdn.islamic.network/audio/adhan/adhan.mp3" type="audio/mpeg">
+</audio>
+// ===============================
+// 🔊 ADAAN SYSTEM
+// ===============================
+
+let adhaanEnabled = true;
+let playedPrayers = {};
+
+function toggleAdhaan(){
+    adhaanEnabled = !adhaanEnabled;
+    let btn = document.getElementById("adhaanBtn");
+
+    if(adhaanEnabled){
+        btn.innerHTML = "🔊 Adhaan ON";
+    } else {
+        btn.innerHTML = "🔇 Adhaan OFF";
+    }
+}
+
+function checkPrayerTimes(todayTimings){
+
+    setInterval(() => {
+
+        if(!adhaanEnabled) return;
+
+        let now = new Date();
+        let currentTime = now.getHours() + ":" + 
+                          String(now.getMinutes()).padStart(2,'0');
+
+        let prayers = {
+            Fajr: todayTimings.Fajr,
+            Dhuhr: todayTimings.Dhuhr,
+            Asr: todayTimings.Asr,
+            Maghrib: todayTimings.Maghrib,
+            Isha: todayTimings.Isha
+        };
+
+        for(let prayer in prayers){
+
+            let prayerTime = prayers[prayer].split(" ")[0];
+
+            if(currentTime === prayerTime && !playedPrayers[prayer]){
+                document.getElementById("adhaanAudio").play();
+                playedPrayers[prayer] = true;
+            }
+        }
+
+    }, 1000);
+}
 <script>
 
 function formatAMPM(time){
@@ -241,7 +294,9 @@ document.getElementById("result").innerHTML=content;
 
 startCountdown(today.timings.Fajr,"suhoorCount");
 startCountdown(today.timings.Maghrib,"iftarCount");
-
+// ✅ Start Adhaan system
+playedPrayers = {};
+checkPrayerTimes(today.timings);
 /* FULL 30 DAY TABLE */
 let table=`
 <h3>Complete Ramadan Day List</h3>
@@ -290,6 +345,7 @@ html2pdf().from(document.getElementById("content")).save("Ramadan-Pray-Time.pdf"
 
 </body>
 </html>
+
 
 
 
