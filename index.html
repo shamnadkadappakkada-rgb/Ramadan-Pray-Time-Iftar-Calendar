@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Worldwide Ramadan Calendar & Prayer Times 2026 | Worldwide</title>
+<title>Worldwide Ramadan Calendar-2026 | Worldwide</title>
 <meta name="description" content="Ramadan Pray Time with Fajr and Iftar highlight. Powered by Itech Journey and D-Bross.">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -196,7 +196,20 @@ const response=await fetch(
 );
 
 const data=await response.json();
-let today=data.data[0];
+const data=await response.json();
+
+// ✅ Get today's real Gregorian date
+let todayDate = new Date();
+let currentDay = todayDate.getDate();
+
+// ✅ Find matching Ramadan day from API
+let today = data.data.find(d =>
+    parseInt(d.date.gregorian.day) === currentDay
+);
+
+if(!today){
+    today = data.data[0]; // fallback safety
+}
 
 let dayName=today.date.gregorian.weekday.en;
 let gregDate=today.date.gregorian.date;
@@ -278,6 +291,7 @@ html2pdf().from(document.getElementById("content")).save("Ramadan-Pray-Time.pdf"
 
 </body>
 </html>
+
 
 
 
