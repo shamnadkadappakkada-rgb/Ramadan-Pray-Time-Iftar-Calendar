@@ -1,75 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Worldwide Ramadan Calendar-2026 | Worldwide</title>
+<meta name="description" content="Ramadan Pray Time with Fajr and Iftar highlight. Powered by Itech Journey and D-Bross.">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+body{
+    margin:0;
+    font-family:'Poppins',sans-serif;
+    background:
+        linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
+        url('madinah.jpg') center/cover no-repeat fixed;
+    color:white;
+    overflow-x:hidden;
+}
+
+/* Stars */
+.stars{
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0;
+    left:0;
+    z-index:-1;
+}
+
+.star{
+    position:absolute;
+    width:3px;
+    height:3px;
+    background:white;
+    border-radius:50%;
+    animation: twinkle 2s infinite alternate;
+}
+
+@keyframes twinkle{
+    from{opacity:0.3;}
+    to{opacity:1;}
+}
+
+/* Crescent */
+.crescent{
+    position:fixed;
+    top:40px;
+    right:40px;
+    width:80px;
+    height:80px;
+    background:radial-gradient(circle at 30px 30px, gold 60%, transparent 61%);
+    border-radius:50%;
+    box-shadow:0 0 40px gold;
+    animation:moonMove 8s infinite ease-in-out;
+    z-index:-1;
+}
+
+@keyframes moonMove{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(15px);}
+}
+
+.top-banner{
+    text-align:center;
+    padding:40px 10px 10px;
+}
+
+.top-banner h1{
+    font-size:42px;
+    margin:0;
+    background:linear-gradient(90deg,#FFD700,#FFA500,#FFD700);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    text-shadow:0 0 25px gold;
+}
+
+.container{
+    max-width:950px;
+    margin:30px auto;
+    padding:30px;
+    border-radius:25px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(25px);
+    box-shadow:0 0 50px rgba(255,215,0,0.25);
+}
+
+.controls{
+    text-align:center;
+    margin-bottom:15px;
+}
+
+button,input{
+    padding:10px 14px;
+    margin:6px;
+    border-radius:30px;
+    border:none;
+    font-weight:600;
+}
+
+button{
+    background:linear-gradient(45deg,#FFD700,#FFA500);
+    cursor:pointer;
+}
+
+input{
+    background:rgba(255,255,255,0.2);
+    color:white;
+}
+
+table{
+    width:100%;
+    margin-top:25px;
+    border-collapse:collapse;
+    background:white;
+    color:black;
+}
+
+th,td{
+    padding:8px;
+    border-bottom:1px solid #ddd;
+    text-align:center;
+}
+
+th{
+    background:#0f3057;
+    color:white;
+}
+
+.highlight{
+    background:orange;
+    padding:5px 10px;
+    border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="stars"></div>
+<div class="crescent"></div>
+
+<div class="top-banner">
+<h1>🌙 Ramadan Mubarak</h1>
+<p><strong>Worldwide Ramadan Calendar-2026</strong></p>
+<p>Powered by <strong>Itech Journey</strong> & <strong>D-Bross</strong></p>
+</div>
+
+<div class="container" id="content">
+
+<div class="controls">
+<button onclick="getLocation()">📍 Auto Detect</button>
+<input type="text" id="city" placeholder="Enter City">
+<button onclick="manualSearch()">Search</button>
+<button onclick="downloadPDF()">📄 PDF</button>
+<button onclick="toggleAdhaan()" id="adhaanBtn">🔊 Adhaan ON</button>
+</div>
+
+<div id="result"></div>
+<div id="calendar"></div>
+
+</div>
+
+<audio id="adhaanAudio" preload="auto">
+<source src="https://cdn.islamic.network/audio/adhan/adhan.mp3" type="audio/mpeg">
+</audio>
+
 <script>
 
 let adhaanEnabled = true;
 let playedPrayers = {};
 let prayerInterval = null;
 
-function formatAMPM(time){
-let t=time.split(" ")[0];
-let [h,m]=t.split(":");
-h=parseInt(h);
-let ampm=h>=12?"PM":"AM";
-h=h%12||12;
-return h+":"+m+" "+ampm;
-}
-
-function startCountdown(targetTime, elementId){
-function update(){
-let now=new Date();
-let target=new Date();
-let [h,m]=targetTime.split(" ")[0].split(":");
-target.setHours(h);
-target.setMinutes(m);
-target.setSeconds(0);
-
-if(target<now){ target.setDate(target.getDate()+1); }
-
-let diff=target-now;
-let hrs=Math.floor(diff/(1000*60*60));
-let mins=Math.floor((diff%(1000*60*60))/(1000*60));
-let secs=Math.floor((diff%(1000*60))/1000);
-
-document.getElementById(elementId).innerHTML=
-`${hrs}h ${mins}m ${secs}s`;
-}
-update();
-setInterval(update,1000);
-}
+/* Unlock Audio */
+document.addEventListener("click", function(){
+    let audio=document.getElementById("adhaanAudio");
+    audio.play().then(()=>{audio.pause();audio.currentTime=0;}).catch(()=>{});
+},{once:true});
 
 function toggleAdhaan(){
 adhaanEnabled=!adhaanEnabled;
 document.getElementById("adhaanBtn").innerHTML=
 adhaanEnabled?"🔊 Adhaan ON":"🔇 Adhaan OFF";
-}
-
-function checkPrayerTimes(todayTimings){
-
-if(prayerInterval){ clearInterval(prayerInterval); }
-
-prayerInterval=setInterval(()=>{
-
-if(!adhaanEnabled) return;
-
-let now=new Date();
-let currentTime=now.getHours()+":"+String(now.getMinutes()).padStart(2,'0');
-
-let prayers={
-Fajr:todayTimings.Fajr,
-Dhuhr:todayTimings.Dhuhr,
-Asr:todayTimings.Asr,
-Maghrib:todayTimings.Maghrib,
-Isha:todayTimings.Isha
-};
-
-for(let prayer in prayers){
-let prayerTime=prayers[prayer].split(" ")[0];
-if(currentTime===prayerTime && !playedPrayers[prayer]){
-document.getElementById("adhaanAudio").play();
-playedPrayers[prayer]=true;
-}
-}
-
-},1000);
 }
 
 function getLocation(){
@@ -91,6 +205,9 @@ loadRamadan(city,"");
 
 async function loadRamadan(city,country){
 
+localStorage.setItem("lastCity", city);
+localStorage.setItem("lastCountry", country);
+
 let hijriYear=new Date().getFullYear()-579;
 
 const response=await fetch(
@@ -98,104 +215,52 @@ const response=await fetch(
 );
 
 const data=await response.json();
+let today=data.data[0];
 
-let todayDate=new Date();
-let currentDay=todayDate.getDate();
+document.getElementById("result").innerHTML=
+`<h3>${city}</h3>
+<p class="highlight">Fajr: ${today.timings.Fajr}</p>
+<p class="highlight">Maghrib: ${today.timings.Maghrib}</p>`;
 
-let today=data.data.find(d=>
-parseInt(d.date.gregorian.day)===currentDay
-);
-
-if(!today){ today=data.data[0]; }
-
-let dayName=today.date.gregorian.weekday.en;
-let gregDate=today.date.gregorian.date;
-let hijriDate=today.date.hijri.date;
-
-let content=`
-<h3>${city}</h3>
-<p><strong>${dayName}</strong>, ${gregDate}
-<small>(${hijriDate})</small></p>
-
-<p class="highlight">
-🌅 Fajr: ${formatAMPM(today.timings.Fajr)}
-</p>
-<p>⏳ Time Remaining:
-<span id="suhoorCount"></span></p>
-
-<p>Dhuhr: ${formatAMPM(today.timings.Dhuhr)}</p>
-<p>Asr: ${formatAMPM(today.timings.Asr)}</p>
-
-<p class="highlight">
-🌙 Maghrib: ${formatAMPM(today.timings.Maghrib)}
-</p>
-<p>⏳ Time Remaining:
-<span id="iftarCount"></span></p>
-
-<p>Isha: ${formatAMPM(today.timings.Isha)}</p>
-`;
-
-document.getElementById("result").innerHTML=content;
-
-startCountdown(today.timings.Fajr,"suhoorCount");
-startCountdown(today.timings.Maghrib,"iftarCount");
-
-playedPrayers={};
-checkPrayerTimes(today.timings);
-
-let table=`
-<h3>Complete Ramadan Day List</h3>
-<table>
-<tr>
-<th>Day</th>
-<th>Date</th>
-<th>Fajr</th>
-<th>Dhuhr</th>
-<th>Asr</th>
-<th>Maghrib</th>
-<th>Isha</th>
-</tr>`;
-
-data.data.forEach((day,index)=>{
-table+=`
-<tr>
-<td>${index+1}</td>
-<td>
-${day.date.gregorian.weekday.en}<br>
-${day.date.gregorian.date}<br>
-<small>${day.date.hijri.date}</small>
-</td>
-<td class="highlight">${formatAMPM(day.timings.Fajr)}</td>
-<td>${formatAMPM(day.timings.Dhuhr)}</td>
-<td>${formatAMPM(day.timings.Asr)}</td>
-<td class="highlight">${formatAMPM(day.timings.Maghrib)}</td>
-<td>${formatAMPM(day.timings.Isha)}</td>
-</tr>`;
-});
-
-table+="</table>";
-document.getElementById("calendar").innerHTML=table;
 }
 
-function toggleMode(){
-document.body.classList.toggle("light");
+/* Auto Load Last Location */
+window.onload=function(){
+
+let savedCity=localStorage.getItem("lastCity");
+let savedCountry=localStorage.getItem("lastCountry");
+
+if(savedCity){
+loadRamadan(savedCity,savedCountry);
 }
 
-function downloadPDF(){
-html2pdf().from(document.getElementById("content")).save("Ramadan-Pray-Time.pdf");
+const starsContainer=document.querySelector('.stars');
+for(let i=0;i<80;i++){
+const star=document.createElement('div');
+star.classList.add('star');
+star.style.top=Math.random()*100+'%';
+star.style.left=Math.random()*100+'%';
+starsContainer.appendChild(star);
 }
 
-/* ⭐ Star Generator (SAFE – No extra script tag) */
-window.onload = function(){
-const starsContainer = document.querySelector('.stars');
-for(let i=0;i<100;i++){
-    const star=document.createElement('div');
-    star.classList.add('star');
-    star.style.top=Math.random()*100+'%';
-    star.style.left=Math.random()*100+'%';
-    star.style.animationDuration=(Math.random()*3+2)+'s';
-    starsContainer.appendChild(star);
-}
 };
 
+function downloadPDF(){
+
+const element=document.getElementById("content");
+
+const opt={
+margin:10,
+filename:'Ramadan-Pray-Time.pdf',
+image:{type:'jpeg',quality:0.98},
+html2canvas:{scale:2},
+jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+};
+
+html2pdf().set(opt).from(element).save();
+}
+
 </script>
+
+</body>
+</html>
