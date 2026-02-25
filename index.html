@@ -9,90 +9,178 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
 body{
     margin:0;
-    font-family:'Segoe UI',sans-serif;
-    background:url('https://images.unsplash.com/photo-1589987607627-8d3e3e5f2c4a') center/cover fixed;
+    font-family:'Poppins',sans-serif;
+    background:url('https://images.unsplash.com/photo-1584551246679-0daf3d275d0f') center/cover no-repeat fixed;
     color:white;
+    overflow-x:hidden;
 }
 
+/* Dark overlay */
 .overlay{
     position:fixed;
     width:100%;
     height:100%;
-    background:rgba(0,0,0,0.75);
+    background:linear-gradient(
+        135deg,
+        rgba(0,0,0,0.85),
+        rgba(0,40,60,0.85)
+    );
+    top:0;
+    left:0;
+    z-index:-2;
+}
+
+/* Animated stars */
+.stars{
+    position:fixed;
+    width:100%;
+    height:100%;
     top:0;
     left:0;
     z-index:-1;
+    overflow:hidden;
 }
 
-.light{
+.star{
+    position:absolute;
+    width:3px;
+    height:3px;
     background:white;
-    color:black;
+    border-radius:50%;
+    animation: twinkle 2s infinite alternate;
 }
 
+@keyframes twinkle{
+    from{opacity:0.2;}
+    to{opacity:1;}
+}
+
+/* Title */
 .top-banner{
     text-align:center;
-    padding:25px 10px 10px;
+    padding:40px 10px 10px;
 }
 
+.top-banner h1{
+    font-size:42px;
+    margin:0;
+    background:linear-gradient(90deg,#FFD700,#FFA500,#FFD700);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    text-shadow:0 0 25px gold;
+    animation:glow 3s infinite alternate;
+}
+
+@keyframes glow{
+    from{ text-shadow:0 0 10px gold; }
+    to{ text-shadow:0 0 35px orange; }
+}
+
+/* Glass Container */
 .container{
     max-width:950px;
-    margin:20px auto;
+    margin:30px auto;
+    padding:30px;
+    border-radius:25px;
     background:rgba(255,255,255,0.08);
-    padding:25px;
-    border-radius:20px;
-    backdrop-filter:blur(12px);
+    backdrop-filter:blur(25px);
+    box-shadow:0 0 50px rgba(255,215,0,0.25);
+    border:1px solid rgba(255,255,255,0.15);
+    animation: float 6s ease-in-out infinite;
 }
 
-button,input{
-    padding:8px;
-    margin:5px;
-    border-radius:6px;
-    border:none;
-}
-
-button{
-    background:gold;
-    cursor:pointer;
-    font-weight:bold;
-}
-
-.highlight{
-    background:#ff5722;
-    padding:5px 10px;
-    border-radius:6px;
-    font-weight:bold;
-    color:white;
-}
-
-table{
-    width:100%;
-    margin-top:20px;
-    border-collapse:collapse;
-    background:white;
-    color:black;
-}
-
-th,td{
-    padding:6px;
-    border:1px solid #ddd;
-    text-align:center;
-}
-
-th{
-    background:#2c3e50;
-    color:white;
+@keyframes float{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-8px);}
 }
 
 .controls{
     text-align:center;
+    margin-bottom:15px;
+}
+
+button,input{
+    padding:10px 14px;
+    margin:6px;
+    border-radius:30px;
+    border:none;
+    font-weight:600;
+    outline:none;
+}
+
+button{
+    background:linear-gradient(45deg,#FFD700,#FFA500);
+    color:black;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:scale(1.1);
+    box-shadow:0 0 20px gold;
+}
+
+input{
+    background:rgba(255,255,255,0.15);
+    color:white;
+    border:1px solid rgba(255,255,255,0.3);
+}
+
+/* Table styling */
+table{
+    width:100%;
+    margin-top:25px;
+    border-collapse:collapse;
+    background:rgba(255,255,255,0.95);
+    color:black;
+    border-radius:15px;
+    overflow:hidden;
+}
+
+th,td{
+    padding:8px;
+    border-bottom:1px solid #ddd;
+    text-align:center;
+}
+
+th{
+    background:#0f3057;
+    color:white;
+}
+
+tr:hover{
+    background:#ffe082;
+    transition:0.3s;
+}
+
+/* Crescent animation */
+.crescent{
+    position:fixed;
+    top:40px;
+    right:40px;
+    width:80px;
+    height:80px;
+    background:radial-gradient(circle at 30px 30px, gold 60%, transparent 61%);
+    border-radius:50%;
+    box-shadow:0 0 40px gold;
+    animation:moonMove 8s infinite ease-in-out;
+}
+
+@keyframes moonMove{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(15px);}
 }
 </style>
 </head>
 
 <body>
 <div class="overlay"></div>
+<div class="stars"></div>
+<div class="crescent"></div>
 
 <div class="top-banner">
 <h1>🌙 Ramadan Mubarak</h1>
@@ -310,7 +398,18 @@ function downloadPDF(){
 html2pdf().from(document.getElementById("content")).save("Ramadan-Pray-Time.pdf");
 }
 
+<script>
+const starsContainer = document.querySelector('.stars');
+for(let i=0;i<100;i++){
+    const star=document.createElement('div');
+    star.classList.add('star');
+    star.style.top=Math.random()*100+'%';
+    star.style.left=Math.random()*100+'%';
+    star.style.animationDuration=(Math.random()*3+2)+'s';
+    starsContainer.appendChild(star);
+}
 </script>
 </body>
 </html>
+
 
