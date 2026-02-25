@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Worldwide Ramadan Calendar with Prayr times</title>
+<title>Worldwide Ramadan Calendar with Prayer times</title>
 <meta name="description" content="Worldwide Ramadan Calendar with Fajr and Iftar highlight. Powered by Itech Journey & D-Bross.">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -60,7 +60,7 @@ body{
     box-shadow:0 0 40px gold;
     animation:starMove 8s infinite ease-in-out;
 }
-@keyframes moonMove{0%,100%{transform:translateY(0);}50%{transform:translateY(15px);}}
+@keyframes starMove{0%,100%{transform:translateY(0);}50%{transform:translateY(15px);}}
 
 /* Top Banner */
 .top-banner{
@@ -150,7 +150,7 @@ tr:hover{background:rgba(255,215,0,0.1);}
 <div class="top-banner">
 <h1>🌙 رمضان مبارك</h1>
 <p><strong>Worldwide Ramadan Calendar-2026</strong></p>
-<p>Developed by <strong>Shamnad Sharafudeen </strong> (D-Bross)</strong></p>
+<p>Developed by: <strong>Shamnad Sharafudeen </strong> (D-Bross)</strong></p>
 </div>
 
 <div class="container" id="content">
@@ -303,10 +303,10 @@ data.data.forEach((day,index)=>{
 table+=`<tr>
 <td>${index+1}</td>
 <td>${day.date.gregorian.weekday.en}<br>${day.date.gregorian.date}<br><small>${day.date.hijri.date}</small></td>
-<td class="highlight">${formatAMPM(day.timings.Fajr)}</td>
+<td class="fade highlight">${formatAMPM(day.timings.Fajr)}</td>
 <td>${formatAMPM(day.timings.Dhuhr)}</td>
 <td>${formatAMPM(day.timings.Asr)}</td>
-<td class="highlight">${formatAMPM(day.timings.Maghrib)}</td>
+<td class="fade highlight">${formatAMPM(day.timings.Maghrib)}</td>
 <td>${formatAMPM(day.timings.Isha)}</td>
 </tr>`;
 });
