@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Worldwide Ramadan Calendar with Prayer Times</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Poppins:wght@300;400;600;700&display=swap');
 
@@ -16,7 +17,6 @@ body{
     overflow-x:hidden;
 }
 
-/* Background stars */
 .overlay{
     position:fixed;
     width:100%;
@@ -24,48 +24,12 @@ body{
     background:linear-gradient(135deg,#000000,#000c25);
     z-index:-2;
 }
-.stars{
-    position:fixed;
-    width:100%;
-    height:100%;
-    z-index:-1;
-}
-.star{
-    position:absolute;
-    width:2px;
-    height:2px;
-    background:white;
-    border-radius:50%;
-    animation: twinkle 3s infinite alternate;
-}
-@keyframes twinkle{from{opacity:0.3;} to{opacity:1;}}
 
-/* Floating moon top-right */
-.moon{
-    position:absolute;
-    top:50px;
-    right:40px;
-    width:120px;
-    height:120px;
-    background:radial-gradient(circle at 30% 30%, #fff 20%, #f5deb3 50%, #d4af37 100%);
-    border-radius:50%;
-    box-shadow:0 0 80px rgba(255,215,0,0.7);
-    animation: floatMoon 6s ease-in-out infinite;
-}
-@keyframes floatMoon{
-0%{transform:translateY(0);opacity:1;}
-25%{transform:translateY(15px);opacity:0.8;}
-50%{transform:translateY(30px);opacity:0;}
-75%{transform:translateY(15px);opacity:0.8;}
-100%{transform:translateY(0);opacity:1;}
-}
-
-/* Header */
 .top-banner{
-    position:relative;
     text-align:center;
     padding:120px 10px 30px;
 }
+
 .top-banner h1{
     font-family:'Amiri', serif;
     font-size:42px;
@@ -73,16 +37,28 @@ body{
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
 }
-.dev{font-size:14px;opacity:0.8;}
-#nextPrayerCountdown{
+
+.dev{font-size:14px;opacity:0.8;margin-bottom:10px;}
+
+#todayDates{
+    font-size:16px;
+    margin-bottom:10px;
+}
+
+#topFajrMaghrib{
     margin-top:10px;
     font-size:18px;
     font-weight:bold;
-    color:#00ffff;
-    text-shadow: 0 0 10px #00ffff;
+    color:#00e5ff;
+    text-shadow:0 0 10px #00e5ff;
 }
 
-/* Container */
+#nextPrayerCountdown{
+    margin-top:8px;
+    font-size:16px;
+    color:#00ffff;
+}
+
 .container{
     max-width:950px;
     margin:30px auto;
@@ -91,8 +67,8 @@ body{
     background:rgba(255,255,255,0.05);
 }
 
-/* Controls */
 .controls{text-align:center;margin-bottom:15px;}
+
 button,input,select{
     padding:10px 14px;
     margin:6px;
@@ -100,37 +76,64 @@ button,input,select{
     border:none;
     font-weight:600;
 }
+
 button{
     background:linear-gradient(45deg,#FFD700,#FFA500);
     cursor:pointer;
 }
-input{background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);}
-select{background:rgba(255,255,255,0.2);color:white;}
 
-/* Table */
+input{
+    background:rgba(255,255,255,0.15);
+    color:white;
+    border:1px solid rgba(255,255,255,0.3);
+}
+
+select{
+    background:rgba(255,255,255,0.2);
+    color:white;
+}
+
 table{
     width:100%;
     margin-top:25px;
     border-collapse:collapse;
     background:rgba(0,0,0,0.8);
 }
-th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.2);text-align:center;}
+
+th,td{
+    padding:8px;
+    border-bottom:1px solid rgba(255,255,255,0.2);
+    text-align:center;
+}
+
 th{background:#1f2833;}
-.highlight{background:#FFD700;color:black;font-weight:bold;}
-.current-day{background:#FFA500 !important;color:black;font-weight:bold;}
+
+/* New Attractive Theme Highlight */
+.highlight{
+    background:#00e5ff;
+    color:black;
+    font-weight:bold;
+}
+
+/* Only Day Column Highlight */
+.current-day{
+    background:#00e5ff !important;
+    color:black;
+    font-weight:bold;
+}
 </style>
 </head>
+
 <body>
 
 <div class="overlay"></div>
-<div class="stars"></div>
 
 <div class="top-banner">
-<div class="moon"></div>
 <h1>🌙 Ramadan Mubarak | رمضان مبارك</h1>
-<p><strong id="todayDates">Worldwide Ramadan Calendar 2026</strong></p>
 <p class="dev">Developed by: Shamnad Sharafudeen (D-Bross)</p>
-<div id="todayPrayers"></div>
+<p id="todayDates"></p>
+
+<div id="topFajrMaghrib"></div>
 <div id="nextPrayerCountdown"></div>
 </div>
 
@@ -140,19 +143,9 @@ th{background:#1f2833;}
 <button onclick="getLocation()">📍 Auto Detect</button>
 <input type="text" id="city" placeholder="Enter City">
 <button onclick="manualSearch()">Search</button>
-
-<select id="languageSelect" onchange="changeLanguage()">
-<option value="en">English</option>
-<option value="ar">العربية</option>
-<option value="hi">हिन्दी</option>
-<option value="ur">اردو</option>
-</select>
-
 <button onclick="downloadPDF()">📄 PDF</button>
-<button onclick="toggleAdhaan()" id="adhaanBtn">🔊 Adhaan ON</button>
 </div>
 
-<div id="result"></div>
 <div id="calendar"></div>
 </div>
 
@@ -161,53 +154,15 @@ th{background:#1f2833;}
 </audio>
 
 <script>
-// Stars
-const starsContainer=document.querySelector('.stars');
-for(let i=0;i<120;i++){
-const star=document.createElement('div');
-star.classList.add('star');
-star.style.top=Math.random()*100+'%';
-star.style.left=Math.random()*100+'%';
-starsContainer.appendChild(star);
-}
 
-// Translations
-const translations={
-en:{day:"Day",date:"Date",fajr:"Fajr",dhuhr:"Dhuhr",asr:"Asr",maghrib:"Maghrib",isha:"Isha",list:"Complete Ramadan Day List"},
-ar:{day:"اليوم",date:"التاريخ",fajr:"الفجر",dhuhr:"الظهر",asr:"العصر",maghrib:"المغرب",isha:"العشاء",list:"قائمة أيام رمضان الكاملة"},
-hi:{day:"दिन",date:"तारीख",fajr:"फजर",dhuhr:"ज़ुहर",asr:"असर",maghrib:"मग़रिब",isha:"इशा",list:"रमज़ान की पूरी सूची"},
-ur:{day:"دن",date:"تاریخ",fajr:"فجر",dhuhr:"ظہر",asr:"عصر",maghrib:"مغرب",isha:"عشاء",list:"رمضان کی مکمل فہرست"}
-};
-
-let currentLanguage="en";
-let adhaanEnabled=true;
 let lastData=null;
-let playedPrayers={};
 
-// Language change
-function changeLanguage(){
-currentLanguage=document.getElementById("languageSelect").value;
-document.body.dir=(currentLanguage==="ar"||currentLanguage==="ur")?"rtl":"ltr";
-if(lastData) renderCalendar(lastData);
-}
-
-// Toggle Adhaan
-function toggleAdhaan(){
-adhaanEnabled=!adhaanEnabled;
-document.getElementById("adhaanBtn").innerHTML=adhaanEnabled?"🔊 Adhaan ON":"🔇 Adhaan OFF";
-}
-
-// Location
-function getLocation(){
-navigator.geolocation.getCurrentPosition(pos=>{
-fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`)
-.then(res=>res.json())
-.then(data=>{
-let city=data.address.city||data.address.town||data.address.village;
-let country=data.address.country;
-loadRamadan(city,country);
-});
-},err=>{alert("Location access denied. Please allow and try again.");});
+async function loadRamadan(city,country){
+let hijriYear=new Date().getFullYear()-579;
+const response=await fetch(`https://api.aladhan.com/v1/hijriCalendarByCity/${hijriYear}/9?city=${city}&country=${country}&method=4`);
+const data=await response.json();
+lastData=data;
+renderCalendar(data);
 }
 
 function manualSearch(){
@@ -215,134 +170,105 @@ let city=document.getElementById("city").value;
 loadRamadan(city,"");
 }
 
-// Load Ramadan Calendar
-async function loadRamadan(city,country){
-let hijriYear=new Date().getFullYear()-579;
-const response=await fetch(`https://api.aladhan.com/v1/hijriCalendarByCity/${hijriYear}/9?city=${city}&country=${country}&method=4`);
-const data=await response.json();
-lastData=data;
-playedPrayers={};
-renderCalendar(data);
-}
-
-// Render Calendar & Top Prayers
 function renderCalendar(data){
+
 let todayDate=new Date();
 let currentDay=todayDate.getDate();
 let today=data.data.find(d=>parseInt(d.date.gregorian.day)===currentDay);
 if(!today) today=data.data[0];
 
-// Show today’s English & Hijri date
-document.getElementById("todayDates").innerHTML=`Today: ${today.date.gregorian.date} (${today.date.gregorian.weekday.en}) | ${today.date.hijri.date} Hijri`;
+/* Today Date under Developed by */
+document.getElementById("todayDates").innerHTML=
+`Today: ${today.date.gregorian.date} (${today.date.gregorian.weekday.en})
+<br>${today.date.hijri.date} Hijri`;
 
-// Show top prayers
-document.getElementById("todayPrayers").innerHTML=`
-<p class="highlight">🌅 ${translations[currentLanguage].fajr}: ${today.timings.Fajr.replace(/ \(.*\)/,'')}</p>
-<p>${translations[currentLanguage].dhuhr}: ${today.timings.Dhuhr.replace(/ \(.*\)/,'')}</p>
-<p>${translations[currentLanguage].asr}: ${today.timings.Asr.replace(/ \(.*\)/,'')}</p>
-<p class="highlight">🌙 ${translations[currentLanguage].maghrib}: ${today.timings.Maghrib.replace(/ \(.*\)/,'')}</p>
-<p>${translations[currentLanguage].isha}: ${today.timings.Isha.replace(/ \(.*\)/,'')}</p>
-`;
+/* Fajr & Maghrib Top Only */
+document.getElementById("topFajrMaghrib").innerHTML=
+`🌅 Fajr: ${today.timings.Fajr.split(" ")[0]} | 🌙 Maghrib: ${today.timings.Maghrib.split(" ")[0]}`;
 
-// Countdown for next prayer
+/* Countdown */
 startNextPrayerCountdown(today.timings);
 
-// Table
-let table=`<h3>${translations[currentLanguage].list}</h3>
-<table>
+/* Table */
+let table=`<table>
 <tr>
-<th>${translations[currentLanguage].day}</th>
-<th>${translations[currentLanguage].date}</th>
-<th>${translations[currentLanguage].fajr}</th>
-<th>${translations[currentLanguage].dhuhr}</th>
-<th>${translations[currentLanguage].asr}</th>
-<th>${translations[currentLanguage].maghrib}</th>
-<th>${translations[currentLanguage].isha}</th>
-<th>Hijri</th>
+<th>Day</th>
+<th>Date</th>
+<th>Fajr</th>
+<th>Dhuhr</th>
+<th>Asr</th>
+<th>Maghrib</th>
+<th>Isha</th>
 </tr>`;
 
 data.data.forEach((day,index)=>{
+
 let isToday=parseInt(day.date.gregorian.day)===currentDay;
-table+=`<tr class="${isToday?'current-day':''}">
-<td>${index+1}</td>
-<td>${day.date.gregorian.date} | ${day.date.hijri.date}</td>
-<td class="highlight">${day.timings.Fajr.replace(/ \(.*\)/,'')}</td>
-<td>${day.timings.Dhuhr.replace(/ \(.*\)/,'')}</td>
-<td>${day.timings.Asr.replace(/ \(.*\)/,'')}</td>
-<td class="highlight">${day.timings.Maghrib.replace(/ \(.*\)/,'')}</td>
-<td>${day.timings.Isha.replace(/ \(.*\)/,'')}</td>
-<td>${day.date.hijri.date}</td>
+
+table+=`<tr>
+<td class="${isToday?'current-day':''}">${index+1}</td>
+<td>
+${day.date.gregorian.date}
+<br>
+${day.date.hijri.date}
+</td>
+<td class="highlight">${day.timings.Fajr.split(" ")[0]}</td>
+<td>${day.timings.Dhuhr.split(" ")[0]}</td>
+<td>${day.timings.Asr.split(" ")[0]}</td>
+<td class="highlight">${day.timings.Maghrib.split(" ")[0]}</td>
+<td>${day.timings.Isha.split(" ")[0]}</td>
 </tr>`;
 });
-
-// Auto Adhaan
-if(adhaanEnabled) checkAdhaan(today.timings);
 
 table+="</table>";
 document.getElementById("calendar").innerHTML=table;
 }
 
-// Next Prayer Countdown
+/* Countdown Function */
 let countdownInterval=null;
+
 function startNextPrayerCountdown(timings){
+
 if(countdownInterval) clearInterval(countdownInterval);
+
 countdownInterval=setInterval(()=>{
+
 let now=new Date();
 let prayersOrder=["Fajr","Dhuhr","Asr","Maghrib","Isha"];
 let nextPrayer=null;
+
 for(let p of prayersOrder){
 let [h,m]=timings[p].split(" ")[0].split(":");
 let prayerTime=new Date();
-prayerTime.setHours(h);
-prayerTime.setMinutes(m);
-prayerTime.setSeconds(0);
+prayerTime.setHours(h,m,0);
 if(prayerTime>now){nextPrayer=p;break;}
 }
+
 if(!nextPrayer) nextPrayer="Fajr";
+
 let [h,m]=timings[nextPrayer].split(" ")[0].split(":");
 let target=new Date();
-target.setHours(h);
-target.setMinutes(m);
-target.setSeconds(0);
+target.setHours(h,m,0);
 if(target<now) target.setDate(target.getDate()+1);
+
 let diff=target-now;
+
 let hrs=Math.floor(diff/(1000*60*60));
 let mins=Math.floor((diff%(1000*60*60))/(1000*60));
 let secs=Math.floor((diff%(1000*60))/1000);
-document.getElementById("nextPrayerCountdown").innerHTML=`Next ${translations[currentLanguage][nextPrayer.toLowerCase()]} in ${hrs}h ${mins}m ${secs}s`;
+
+document.getElementById("nextPrayerCountdown").innerHTML=
+`Next ${nextPrayer} in ${hrs}h ${mins}m ${secs}s`;
+
 },1000);
 }
 
-// Auto Adhaan
-let adhaanInterval=null;
-function checkAdhaan(todayTimings){
-if(adhaanInterval) clearInterval(adhaanInterval);
-adhaanInterval=setInterval(()=>{
-if(!adhaanEnabled) return;
-let now=new Date();
-let currentTime=now.getHours()+":"+String(now.getMinutes()).padStart(2,'0');
-let prayers={
-Fajr:todayTimings.Fajr.split(" ")[0],
-Dhuhr:todayTimings.Dhuhr.split(" ")[0],
-Asr:todayTimings.Asr.split(" ")[0],
-Maghrib:todayTimings.Maghrib.split(" ")[0],
-Isha:todayTimings.Isha.split(" ")[0]
-};
-for(let prayer in prayers){
-if(currentTime===prayers[prayer] && !playedPrayers[prayer]){
-document.getElementById("adhaanAudio").play();
-playedPrayers[prayer]=true;
-}
-}
-},1000);
-}
-
-// PDF
 function downloadPDF(){
 html2pdf().from(document.getElementById("content"))
 .set({jsPDF:{format:'a4',orientation:'portrait'}})
 .save("Ramadan-Pray-Time.pdf");
 }
+
 </script>
 </body>
 </html>
