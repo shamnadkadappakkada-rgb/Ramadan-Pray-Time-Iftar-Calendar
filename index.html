@@ -244,20 +244,25 @@ let table=`<h3>${translations[currentLanguage].list}</h3>
 <th>${translations[currentLanguage].asr}</th>
 <th>${translations[currentLanguage].maghrib}</th>
 <th>${translations[currentLanguage].isha}</th>
-<th>Hijri</th>
 </tr>`;
 
 data.data.forEach((day,index)=>{
 let isToday=parseInt(day.date.gregorian.day)===currentDay;
+
 table+=`<tr class="${isToday?'current-day':''}">
 <td>${index+1}</td>
-<td>${day.date.gregorian.date}</td>
+
+<td>
+    <div class="greg-date">${day.date.gregorian.date}</div>
+    <div class="hijri-date">${day.date.hijri.date}</div>
+</td>
+
 <td class="highlight">${day.timings.Fajr.replace(/ \(.*\)/,'')}</td>
 <td>${day.timings.Dhuhr.replace(/ \(.*\)/,'')}</td>
 <td>${day.timings.Asr.replace(/ \(.*\)/,'')}</td>
 <td class="highlight">${day.timings.Maghrib.replace(/ \(.*\)/,'')}</td>
 <td>${day.timings.Isha.replace(/ \(.*\)/,'')}</td>
-<td>${day.date.hijri.date}</td>
+
 </tr>`;
 });
 
@@ -303,3 +308,4 @@ html2pdf().from(document.getElementById("content"))
 </script>
 </body>
 </html>
+
