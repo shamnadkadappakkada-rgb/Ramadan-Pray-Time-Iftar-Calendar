@@ -241,7 +241,9 @@ document.getElementById("todayPrayers").innerHTML=`
 <p class="highlight">🌙 Maghrib: ${convertToAMPM(today.timings.Maghrib)}</p>
 <p>Isha: ${convertToAMPM(today.timings.Isha)}</p>
 `;
-
+/* ===== ADHAAN TIMER ADDED START ===== */
+startAdhaanTimer(fajrTime, maghribTime);
+/* ===== ADHAAN TIMER ADDED END ===== */
 let table=`<table><tr>
 <th>Day</th>
 <th>Date</th>
@@ -269,6 +271,47 @@ table+=`<tr class="${isToday?'current-day':''}">
 table+="</table>";
 document.getElementById("calendar").innerHTML=table;
 }
+  /* ===== ADHAAN TIMER ADDED START ===== */
+function startAdhaanTimer(fajr, maghrib){
+
+function parseTimeToDate(timeStr){
+let [h,m]=timeStr.split(":");
+let now=new Date();
+let t=new Date();
+t.setHours(parseInt(h));
+t.setMinutes(parseInt(m));
+t.setSeconds(0);
+if(t<now) t.setDate(t.getDate()+1);
+return t;
+}
+
+let fajrDate=parseTimeToDate(fajr);
+let maghribDate=parseTimeToDate(maghrib);
+
+setInterval(function(){
+
+let now=new Date();
+let nextPrayer= now < fajrDate ? fajrDate : maghribDate;
+let diff=nextPrayer-now;
+
+let hours=Math.floor(diff/1000/60/60);
+let minutes=Math.floor((diff/1000/60)%60);
+let seconds=Math.floor((diff/1000)%60);
+
+document.getElementById("countdownTimer").innerHTML=
+"Next Adhaan in: "+hours+"h "+minutes+"m "+seconds+"s";
+
+if(hours===0 && minutes===0 && seconds===0){
+if(adhaanEnabled){
+document.getElementById("adhaanAudio").play();
+}
+}
+
+},1000);
+}
+/* ===== ADHAAN TIMER ADDED END ===== */
+
 </script>
 </body>
 </html>
+
