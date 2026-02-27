@@ -241,9 +241,8 @@ document.getElementById("todayPrayers").innerHTML=`
 <p class="highlight">🌙 Maghrib: ${convertToAMPM(today.timings.Maghrib)}</p>
 <p>Isha: ${convertToAMPM(today.timings.Isha)}</p>
 `;
-/* ===== ADHAAN TIMER ADDED START ===== */
 startAdhaanTimer(fajrTime, maghribTime);
-/* ===== ADHAAN TIMER ADDED END ===== */
+
 let table=`<table><tr>
 <th>Day</th>
 <th>Date</th>
@@ -271,7 +270,6 @@ table+=`<tr class="${isToday?'current-day':''}">
 table+="</table>";
 document.getElementById("calendar").innerHTML=table;
 }
-  /* ===== ADHAAN TIMER ADDED START ===== */
 function startAdhaanTimer(fajr, maghrib){
 
 function parseTimeToDate(timeStr){
@@ -309,9 +307,9 @@ document.getElementById("adhaanAudio").play();
 
 },1000);
 }
-/* ===== ADHAAN TIMER ADDED END ===== */
 
 </script>
 </body>
 </html>
+
 
