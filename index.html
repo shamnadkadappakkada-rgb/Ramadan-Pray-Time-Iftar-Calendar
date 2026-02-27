@@ -14,20 +14,45 @@ margin:0;
 font-family:'Poppins',sans-serif;
 background:#0b0c10;
 color:white;
-transition:0.3s;
+overflow-x:hidden;
+}
+
+/* 🌙 Floating Moon */
+.moon{
+position:fixed;
+top:80px;
+right:60px;
+font-size:60px;
+animation:floatMoon 6s ease-in-out infinite;
+z-index:0;
+}
+
+@keyframes floatMoon{
+0%{transform:translateY(0px);}
+50%{transform:translateY(-20px);}
+100%{transform:translateY(0px);}
 }
 
 .top-banner{
 text-align:center;
 padding:100px 10px 20px;
+position:relative;
+z-index:1;
 }
 
 .top-banner h1{
 font-family:'Amiri', serif;
-font-size:40px;
+font-size:42px;
 background:linear-gradient(45deg,#FFD700,#FFA500);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
+}
+
+.arabic-title{
+font-family:'Amiri', serif;
+font-size:32px;
+color:#FFD700;
+margin-top:5px;
 }
 
 #todayDateDisplay{
@@ -36,14 +61,24 @@ font-weight:600;
 margin-top:10px;
 }
 
+/* 🔥 Countdown Highlight Box */
+.timer-box{
+margin-top:15px;
+padding:15px;
+border-radius:15px;
+background:rgba(212,175,55,0.15);
+border:1px solid rgba(212,175,55,0.6);
+box-shadow:0 0 15px rgba(212,175,55,0.5);
+}
+
 #nextPrayerDisplay{
 color:#FFD700;
-margin-top:15px;
+font-size:20px;
 }
 
 #countdownTimer{
-font-size:20px;
-margin-top:5px;
+font-size:22px;
+font-weight:600;
 }
 
 .container{
@@ -116,11 +151,19 @@ opacity:0.8;
 
 <body>
 
+<div class="moon">🌙</div>
+
 <div class="top-banner">
-<h1>🌙 Ramadan Mubarak</h1>
+<h1>Ramadan Mubarak</h1>
+<div class="arabic-title">رمضان مبارك</div>
+
 <p id="todayDateDisplay"></p>
+
+<div class="timer-box">
 <h2 id="nextPrayerDisplay"></h2>
-<h3 id="countdownTimer"></h3>
+<div id="countdownTimer"></div>
+</div>
+
 <div id="todayPrayers"></div>
 </div>
 
@@ -150,7 +193,7 @@ opacity:0.8;
 
 <script>
 
-/* ================= LANGUAGE ================= */
+/* ===== LANGUAGE ===== */
 
 let currentLanguage="en";
 let lastData=null;
@@ -167,16 +210,14 @@ currentLanguage=lang;
 
 if(lang==="ar" || lang==="ur"){
 document.body.style.direction="rtl";
-document.body.style.textAlign="right";
 }else{
 document.body.style.direction="ltr";
-document.body.style.textAlign="left";
 }
 
 if(lastData) renderCalendar(lastData);
 }
 
-/* ================= TIME FORMAT ================= */
+/* ===== TIME FORMAT ===== */
 
 function convertToAMPM(time){
 time=time.replace(/ \(.*\)/,'');
@@ -187,7 +228,7 @@ h=h%12; h=h?h:12;
 return h+":"+m+" "+ampm;
 }
 
-/* ================= PRAYER SYSTEM ================= */
+/* ===== PRAYER SYSTEM ===== */
 
 let prayerTimesToday=null;
 let adhaanEnabled=true;
@@ -265,13 +306,9 @@ lastAdhaanMinute=current;
 }
 }
 
-/* ================= LOCATION ================= */
+/* ===== LOCATION ===== */
 
 function getLocation(){
-if(!navigator.geolocation){
-alert("Geolocation not supported.");
-return;
-}
 navigator.geolocation.getCurrentPosition(async pos=>{
 const lat=pos.coords.latitude;
 const lon=pos.coords.longitude;
@@ -293,7 +330,7 @@ let city=document.getElementById("city").value;
 loadRamadan(city,"");
 }
 
-/* ================= LOAD DATA ================= */
+/* ===== LOAD & RENDER ===== */
 
 async function loadRamadan(city,country){
 let hijriYear=new Date().getFullYear()-579;
@@ -302,8 +339,6 @@ const data=await response.json();
 lastData=data;
 renderCalendar(data);
 }
-
-/* ================= RENDER ================= */
 
 function renderCalendar(data){
 
