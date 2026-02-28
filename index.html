@@ -17,14 +17,84 @@ color:white;
 overflow-x:hidden;
 }
 
-/* 🌙 Floating Moon */
-.moon{
+/* 🌌 Night Sky Background */
+body{
+margin:0;
+font-family:'Poppins',sans-serif;
+background:radial-gradient(ellipse at bottom, #0d1b2a 0%, #000814 100%);
+color:white;
+overflow-x:hidden;
+position:relative;
+}
+
+/* ✨ Stars */
+.stars{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:0;
+overflow:hidden;
+}
+
+.star{
+position:absolute;
+width:2px;
+height:2px;
+background:white;
+border-radius:50%;
+animation:twinkle 3s infinite ease-in-out;
+}
+
+@keyframes twinkle{
+0%,100%{opacity:0.2;}
+50%{opacity:1;}
+}
+
+/* 🌙 3D Realistic Moon Right */
+.moon-right{
 position:fixed;
 top:80px;
 right:60px;
-font-size:60px;
-animation:floatMoon 6s ease-in-out infinite;
-z-index:0;
+width:130px;
+height:130px;
+border-radius:50%;
+background:radial-gradient(circle at 30% 30%, #fffacd, #f5deb3, #d4af37);
+box-shadow:
+0 0 40px rgba(255,215,0,0.7),
+inset -15px -15px 30px rgba(0,0,0,0.4);
+animation:floatMoonRight 6s ease-in-out infinite;
+z-index:1;
+}
+
+/* 🌙 Half Moon Left */
+.moon-left{
+position:fixed;
+top:100px;
+left:60px;
+width:100px;
+height:100px;
+border-radius:50%;
+background:radial-gradient(circle at 40% 40%, #fffacd, #d4af37);
+box-shadow:
+0 0 30px rgba(255,215,0,0.6),
+inset -10px -10px 20px rgba(0,0,0,0.5);
+clip-path: inset(0 50% 0 0);
+animation:floatMoonLeft 8s ease-in-out infinite;
+z-index:1;
+}
+
+@keyframes floatMoonRight{
+0%{transform:translateY(0px);}
+50%{transform:translateY(-25px);}
+100%{transform:translateY(0px);}
+}
+
+@keyframes floatMoonLeft{
+0%{transform:translateY(0px);}
+50%{transform:translateY(-18px);}
+100%{transform:translateY(0px);}
 }
 
 @keyframes floatMoon{
@@ -151,18 +221,25 @@ opacity:0.8;
 
 <body>
 
-<div class="moon">🌙</div>
+<div class="stars" id="stars"></div>
+<div class="moon-right"></div>
+<div class="moon-left"></div>
 
 <div class="top-banner">
-<h1>Ramadan Mubarak</h1>
-<div class="arabic-title">رمضان مبارك</div>
+<h1 style="font-family:'Amiri',serif;font-size:42px;color:#FFD700;">
+رمضان مبارك
+</h1>
+
+<div style="font-size:30px;color:#FFD700;margin-top:5px;">
+Ramadan Mubarak
+</div>
+
+<div style="margin-top:6px;font-size:14px;opacity:0.9;">
+Developed by: Shamnad Sharafudeen (D-Bross)
+</div>
 
 <p id="todayDateDisplay"></p>
 
-<div class="timer-box">
-<h2 id="nextPrayerDisplay"></h2>
-<div id="countdownTimer"></div>
-</div>
 
 <div id="todayPrayers"></div>
 </div>
@@ -290,11 +367,13 @@ let hh=Math.floor(diff/1000/60/60);
 let mm=Math.floor((diff/1000/60)%60);
 let ss=Math.floor((diff/1000)%60);
 
-document.getElementById("nextPrayerDisplay").innerHTML=
-translations[currentLanguage].next+": "+nextName;
+let countdownText="⏳ "+hh+"h "+mm+"m "+ss+"s";
 
-document.getElementById("countdownTimer").innerHTML=
-hh+"h "+mm+"m "+ss+"s";
+let el1=document.getElementById("countdownInline");
+let el2=document.getElementById("countdownInline2");
+
+if(el1) el1.innerHTML=countdownText;
+if(el2) el2.innerHTML=countdownText;
 
 for(let p in prayerTimesToday){
 if(current===prayerTimesToday[p] &&
@@ -350,10 +429,19 @@ document.getElementById("todayDateDisplay").innerHTML=
 today.date.gregorian.date+" | "+today.date.hijri.date;
 
 document.getElementById("todayPrayers").innerHTML=`
-<p class="highlight">${translations[currentLanguage].fajr}: ${convertToAMPM(today.timings.Fajr)}</p>
+<p class="highlight">
+🌅 ${translations[currentLanguage].fajr}: ${convertToAMPM(today.timings.Fajr)}
+<br><span id="countdownInline" style="font-size:14px;">⏳ --</span>
+</p>
+
 <p>${translations[currentLanguage].dhuhr}: ${convertToAMPM(today.timings.Dhuhr)}</p>
 <p>${translations[currentLanguage].asr}: ${convertToAMPM(today.timings.Asr)}</p>
-<p class="highlight">${translations[currentLanguage].maghrib}: ${convertToAMPM(today.timings.Maghrib)}</p>
+
+<p class="highlight">
+🌇 ${translations[currentLanguage].maghrib}: ${convertToAMPM(today.timings.Maghrib)}
+<br><span id="countdownInline2" style="font-size:14px;">⏳ --</span>
+</p>
+
 <p>${translations[currentLanguage].isha}: ${convertToAMPM(today.timings.Isha)}</p>
 `;
 
@@ -394,3 +482,4 @@ html2pdf().from(document.getElementById("content"))
 </script>
 </body>
 </html>
+
