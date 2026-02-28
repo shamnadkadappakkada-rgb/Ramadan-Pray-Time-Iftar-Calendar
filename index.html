@@ -35,7 +35,7 @@ body{
 }
 
 /* 🌙 Moons */
-.moon-right, .moon-left{
+.moon-right, .star-left{
   position:fixed;
   border-radius:50%;
   z-index:1;
@@ -49,7 +49,7 @@ body{
               inset 15px 15px 25px rgba(255,255,255,0.25);
   animation:floatMoonRight 6s ease-in-out infinite;
 }
-.moon-left{
+.star-left{
   top:100px; left:60px;
   width:120px; height:120px;
   background:radial-gradient(circle at 40% 40%, #fffef5 0%, #e6c76b 60%, #a67c00 100%);
@@ -57,10 +57,10 @@ body{
               inset -20px -20px 35px rgba(0,0,0,0.55),
               inset 10px 10px 20px rgba(255,255,255,0.2);
   clip-path: inset(0 50% 0 0);
-  animation:floatMoonLeft 8s ease-in-out infinite;
+  animation:floatStarLeft 8s ease-in-out infinite;
 }
 @keyframes floatMoonRight{0%{transform:translateY(0);}50%{transform:translateY(-25px);}100%{transform:translateY(0);}}
-@keyframes floatMoonLeft{0%{transform:translateY(0);}50%{transform:translateY(-18px);}100%{transform:translateY(0);}}
+@keyframes floatStarLeft{0%{transform:translateY(0);}50%{transform:translateY(-18px);}100%{transform:translateY(0);}}
 
 /* Top Banner */
 .top-banner{text-align:center;padding:150px 10px 20px;position:relative;z-index:2;}
@@ -333,3 +333,4 @@ function downloadPDF(){
 </script>
 </body>
 </html>
+
