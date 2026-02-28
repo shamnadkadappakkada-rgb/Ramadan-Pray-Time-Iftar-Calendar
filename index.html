@@ -44,44 +44,12 @@ body{
   box-shadow:0 0 60px rgba(255,215,0,0.8),0 0 120px rgba(255,215,0,0.4),
              inset -25px -25px 40px rgba(0,0,0,0.45),
              inset 15px 15px 25px rgba(255,255,255,0.25);
-  animation:moonPhases 12s infinite linear, floatMoon 6s ease-in-out infinite;
-  z-index:1;
-  clip-path: ellipse(50% 50% at 50% 50%);
-}
-
-/* 🌟 Golden Star Left */
-.star-left{
-  position:fixed;
-  top:100px; left:60px;
-  width:120px; height:120px;
-  background:transparent;
+  animation:floatMoon 6s ease-in-out infinite;
   z-index:1;
 }
-.star-left::before{
-  content:'★';
-  position:absolute;
-  font-size:120px;
-  color:gold;
-  text-shadow:0 0 10px #ffd700,0 0 20px #ffbf00,0 0 30px #ff9900;
-  animation:floatStar 7s ease-in-out infinite, twinkleStar 2.5s infinite alternate;
-}
-
-/* Floating Animations */
 @keyframes floatMoon{0%{transform:translateY(0);}50%{transform:translateY(-25px);}100%{transform:translateY(0);}}
-@keyframes floatStar{0%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-20px) rotate(45deg);}100%{transform:translateY(0) rotate(0deg);}}
-@keyframes twinkleStar{0%{opacity:0.7;}50%{opacity:1;}100%{opacity:0.7;}}
 
-/* Moon Phases Animation using clip-path */
-@keyframes moonPhases{
-  0%   {clip-path: ellipse(50% 50% at 50% 50%);} /* Full Moon */
-  16%  {clip-path: ellipse(60% 50% at 40% 50%);} /* Waxing Gibbous */
-  33%  {clip-path: ellipse(70% 50% at 35% 50%);} /* First Quarter */
-  50%  {clip-path: ellipse(80% 50% at 50% 50%);} /* Full Moon enlarged */
-  66%  {clip-path: ellipse(70% 50% at 65% 50%);} /* Waning Gibbous */
-  83%  {clip-path: ellipse(60% 50% at 60% 50%);} /* Third Quarter */
-  100% {clip-path: ellipse(50% 50% at 50% 50%);} /* Full Moon */
-}
-
+  
 /* Top Banner */
 .top-banner{
   text-align:center;
@@ -94,24 +62,14 @@ body{
 .developer-line{margin-top:8px;font-size:14px;opacity:0.9;}
 #todayDateDisplay{color:#FFD700;font-weight:600;margin-top:10px;}
 
-/* Timer + Fajr & Maghrib Highlight Inline with Emblem */
-.timer-box{
-  display:flex;
-  justify-content:center;
-  gap:15px;
-  margin-top:15px;
-  font-weight:600;
-}
-.timer-box .highlight-prayer{
-  background:rgba(212,175,55,0.18);
-  border:1px solid rgba(212,175,55,0.5);
-  border-radius:6px;
-  padding:4px 8px;
-  display:flex;
+/* Timer integrated inside Fajr & Maghrib highlights */
+.timer-inline{
+  display:inline-flex;
   align-items:center;
   gap:6px;
+  font-weight:600;
 }
-.timer-box .highlight-prayer .timer-logo{
+.timer-inline .timer-logo{
   width:18px; height:18px;
   background:linear-gradient(45deg,#FFD700,#FFA500);
   border-radius:50%;
@@ -153,10 +111,9 @@ th{background:#1f2833;}
 </head>
 <body>
 
-<!-- Stars & Moon/Star -->
+<!-- Stars & Moon -->
 <div class="stars" id="stars"></div>
 <div class="moon-right"></div>
-<div class="star-left"></div>
 
 <!-- Top Banner -->
 <div class="top-banner">
@@ -164,12 +121,6 @@ th{background:#1f2833;}
   <div class="english-main">Ramadan Mubarak</div>
   <div class="developer-line">Developed by: Shamnad Sharafudeen (D-Bross)</div>
   <p id="todayDateDisplay"></p>
-
-  <div class="timer-box">
-    <p class="highlight-prayer" id="fajrTime"><span class="timer-logo"></span> Fajr: --:--</p>
-    <p class="highlight-prayer" id="maghribTime"><span class="timer-logo"></span> Maghrib/Iftar: --:--</p>
-    <p class="highlight-prayer"><span class="timer-logo"></span> Countdown: <span id="countdownTimer">--h --m --s</span></p>
-  </div>
 
   <div id="todayPrayers"></div>
 </div>
@@ -284,7 +235,11 @@ function updatePrayerSystem(){
   let mm=Math.floor((diff/1000/60)%60);
   let ss=Math.floor((diff/1000)%60);
 
-  document.getElementById("countdownTimer").innerHTML=hh+"h "+mm+"m "+ss+"s";
+  // Update countdown inside Fajr & Maghrib highlights
+  const fajrElem = document.querySelector('.highlight[data-prayer="Fajr"]');
+  const maghribElem = document.querySelector('.highlight[data-prayer="Maghrib"]');
+  if(fajrElem) fajrElem.innerHTML = `Fajr: ${convertToAMPM(prayerTimesToday.Fajr)} <span class="timer-logo"></span> ${hh}h ${mm}m ${ss}s`;
+  if(maghribElem) maghribElem.innerHTML = `Maghrib/Iftar: ${convertToAMPM(prayerTimesToday.Maghrib)} <span class="timer-logo"></span> ${hh}h ${mm}m ${ss}s`;
 
   for(let p in prayerTimesToday){
     if(current===prayerTimesToday[p] && lastAdhaanMinute!==current && adhaanEnabled){
@@ -328,16 +283,15 @@ function renderCalendar(data){
   document.getElementById("todayDateDisplay").innerHTML=
     today.date.gregorian.date+" | "+today.date.hijri.date;
 
-  document.getElementById("fajrTime").innerHTML = '<span class="timer-logo"></span> Fajr: '+convertToAMPM(today.timings.Fajr);
-  document.getElementById("maghribTime").innerHTML = '<span class="timer-logo"></span> Maghrib/Iftar: '+convertToAMPM(today.timings.Maghrib);
-
-  document.getElementById("todayPrayers").innerHTML=`
-    <p class="highlight">${translations[currentLanguage].fajr}: ${convertToAMPM(today.timings.Fajr)}</p>
+  let todayPrayersHTML = `
+    <p class="highlight" data-prayer="Fajr">Fajr: ${convertToAMPM(today.timings.Fajr)}</p>
     <p>${translations[currentLanguage].dhuhr}: ${convertToAMPM(today.timings.Dhuhr)}</p>
     <p>${translations[currentLanguage].asr}: ${convertToAMPM(today.timings.Asr)}</p>
-    <p class="highlight">${translations[currentLanguage].maghrib}: ${convertToAMPM(today.timings.Maghrib)}</p>
+    <p class="highlight" data-prayer="Maghrib">Maghrib/Iftar: ${convertToAMPM(today.timings.Maghrib)}</p>
     <p>${translations[currentLanguage].isha}: ${convertToAMPM(today.timings.Isha)}</p>
   `;
+
+  document.getElementById("todayPrayers").innerHTML=todayPrayersHTML;
 
   initializePrayerSystem(today.timings);
 
