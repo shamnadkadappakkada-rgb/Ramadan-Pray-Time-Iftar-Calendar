@@ -35,9 +35,9 @@ body{
 }
 
 /* 🌙 Realistic Moon left */
-.moon-right{
+.moon-left{
   position:fixed;
-  top:80px; right:60px;
+  top:80px; left:60px;
   width:150px; height:150px;
   border-radius:50%;
   background:radial-gradient(circle at 30% 30%, #fffef5 0%, #f8e8c8 35%, #d4af37 60%, #a67c00 100%);
@@ -284,11 +284,11 @@ function renderCalendar(data){
     today.date.gregorian.date+" | "+today.date.hijri.date;
 
   let todayPrayersHTML = `
-    <p class="highlight" data-prayer="Fajr">Fajr: ${convertToAMPM(today.timings.Fajr)}</p>
+    <p>${translations[currentLanguage].fajr}: ${convertToAMPM(today.timings.Fajr)}</p>
     <p>${translations[currentLanguage].dhuhr}: ${convertToAMPM(today.timings.Dhuhr)}</p>
     <p>${translations[currentLanguage].asr}: ${convertToAMPM(today.timings.Asr)}</p>
     <p class="highlight" data-prayer="Maghrib">Maghrib/Iftar: ${convertToAMPM(today.timings.Maghrib)}</p>
-    <p>${translations[currentLanguage].isha}: ${convertToAMPM(today.timings.Isha)}</p>
+    <p>${translations[currentLanguage].Isha}: ${convertToAMPM(today.timings.Isha)}</p>
   `;
 
   document.getElementById("todayPrayers").innerHTML=todayPrayersHTML;
