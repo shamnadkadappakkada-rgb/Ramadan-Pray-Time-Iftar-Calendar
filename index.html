@@ -34,10 +34,10 @@ body{
   0%,100%{opacity:0.2;}50%{opacity:1;}
 }
 
-/* 🌙 Realistic Moon left */
-.moon-left{
+/* 🌙 Realistic Moon right */
+.moon-right{
   position:fixed;
-  top:80px; left:60px;
+  top:80px; right:60px;
   width:150px; height:150px;
   border-radius:50%;
   background:radial-gradient(circle at 30% 30%, #fffef5 0%, #f8e8c8 35%, #d4af37 60%, #a67c00 100%);
@@ -287,7 +287,7 @@ function renderCalendar(data){
     <p>${translations[currentLanguage].fajr}: ${convertToAMPM(today.timings.Fajr)}</p>
     <p>${translations[currentLanguage].dhuhr}: ${convertToAMPM(today.timings.Dhuhr)}</p>
     <p>${translations[currentLanguage].asr}: ${convertToAMPM(today.timings.Asr)}</p>
-    <p class="highlight" data-prayer="Maghrib">Maghrib/Iftar: ${convertToAMPM(today.timings.Maghrib)}</p>
+   <p>${translations[currentLanguage].maghrib}: ${convertToAMPM(today.timings.Maghrib)}</p>
     <p>${translations[currentLanguage].Isha}: ${convertToAMPM(today.timings.Isha)}</p>
   `;
 
