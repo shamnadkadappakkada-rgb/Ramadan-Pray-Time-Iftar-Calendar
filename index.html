@@ -118,8 +118,8 @@ th{background:#1f2833;}
 <!-- Top Banner -->
 <div class="top-banner">
   <div class="arabic-main"> المؤذن</div>
-  <div class="english-main">"Muaddin"</div>
-   <div class="english-main">World Wide Prayer Time</div>
+  <div class="english-main"> Muaddin </div>
+   <div class="english-line">World Wide Prayer Time</div>
   <div class="developer-line">Developed by: Shamnad Sharafudeen (D-Bross)</div>
   <p id="todayDateDisplay"></p>
 
@@ -311,10 +311,10 @@ function renderCalendar(data){
     table+=`<tr class="${isToday?'current-day':''}">
       <td>${index+1}</td>
       <td>${day.date.gregorian.date}<div class="hijri-date">${day.date.hijri.date}</div></td>
-      <td class="highlight">${convertToAMPM(day.timings.Fajr)}</td>
+        <td>${convertToAMPM(day.timings.Fajr)}</td>
       <td>${convertToAMPM(day.timings.Dhuhr)}</td>
       <td>${convertToAMPM(day.timings.Asr)}</td>
-      <td class="highlight">${convertToAMPM(day.timings.Maghrib)}</td>
+        <td>${convertToAMPM(day.timings.Maghrib)}</td>
       <td>${convertToAMPM(day.timings.Isha)}</td>
     </tr>`;
   });
